@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Il2CppInspector.Common">
+      <HintPath>..\..\..\Il2CppInspector\Il2CppInspector.Common\bin\Debug\netcoreapp3.1\Il2CppInspector.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
