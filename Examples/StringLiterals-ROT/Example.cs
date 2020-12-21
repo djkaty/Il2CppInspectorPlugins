@@ -48,14 +48,16 @@ namespace Example
 
         // This implements IPostProcessMetadata
         // This hook is executed after global-metadata.dat is fully loaded
-        public void PostProcessMetadata(Metadata metadata) {
-
+        public void PostProcessMetadata(Metadata metadata, PluginPostProcessMetadataEventInfo info) {
             // This displays a progress update for our plugin in the CLI or GUI
             PluginServices.For(this).StatusUpdate("Decrypting strings");
 
             // Go through every string literal (string[] metadata.StringLiterals) and ROT each string
             for (var i = 0; i < metadata.StringLiterals.Length; i++)
                 metadata.StringLiterals[i] = string.Join("", metadata.StringLiterals[i].Select(x => (char) (x >= 'a' && x <= 'z' ? (x - 'a' + rotKey.Value) % 26 + 'a' : x)));
+
+            // Report back that we handled the metadata and modified it
+            info.IsHandled = info.IsDataModified = true;
         }
     }
 }
