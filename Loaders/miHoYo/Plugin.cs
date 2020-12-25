@@ -277,11 +277,11 @@ namespace Loader
             // but here we modify the package (the Il2CppInspector object) directly instead
             package.Metadata.StringLiterals = stringLiterals.ToArray();
 
-            // FullyProcessed prevents other plugins from making further post-processing modifications
+            // We don't set FullyProcessed so that other plugins can perform further post-processing modifications
             // IsDataModified tells Il2CppInspector that the contents of its internal data structures have been changed
             // Note this is different from IsStreamModified; changing the data in memory
             // does not automatically rewrite the stream.
-            data.FullyProcessed = data.IsDataModified = true;
+            data.IsDataModified = true;
         }
     }
 }
