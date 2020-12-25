@@ -20,7 +20,7 @@ using Il2CppInspector.PluginAPI.V100;
 namespace Example
 {
     // Define your plugin class, implementing IPlugin plus interfaces for any hooks you wish to use
-    public class ExamplePlugin : IPlugin, IPostProcessMetadata
+    public class ExamplePlugin : IPlugin, ILoadPipeline
     {
         // The ID that will be used to load the plugin from the command-line, ie. --plugins "string-rot"
         public string Id => "string-rot";
@@ -56,8 +56,9 @@ namespace Example
             for (var i = 0; i < metadata.StringLiterals.Length; i++)
                 metadata.StringLiterals[i] = string.Join("", metadata.StringLiterals[i].Select(x => (char) (x >= 'a' && x <= 'z' ? (x - 'a' + rotKey.Value) % 26 + 'a' : x)));
 
-            // Report back that we handled the metadata and modified it
-            info.IsHandled = info.IsDataModified = true;
+            // Report back that we modified the metadata
+            // Note: we do not set info.FullyProcessed in order to allow other plugins to do further processing
+            info.IsDataModified = true;
         }
     }
 }
