@@ -105,6 +105,9 @@ namespace Loader
         // so that we can pass it back to the DLL as needed
         private byte[] metadataBlob;
 
+        // We keep a flag so that we only process applications from miHoYo and not others!
+        private bool IsOurs;
+
         // Here we implement ILoadPipeline
 
         // This executes when the client begins to load a new IL2CPP application
@@ -134,6 +137,13 @@ namespace Loader
         // We use it to call UnityPlayer.dll to decrypt the file in memory
         public void PreProcessMetadata(BinaryObjectStream stream, PluginPreProcessMetadataEventInfo info) {
 
+            // Assume that your plugin is enabled regardless of what is loading
+            // Therefore, we don't want to process global-metadata.dat files that are not for us!
+            // miHoYo metadata has an invalid signature at the start of the file so we use that as the criteria
+            IsOurs = stream.ReadUInt32(0) != Il2CppConstants.MetadataSignature;
+            if (!IsOurs)
+                return;
+
             // Tell the user what is happening in case it takes a while
             PluginServices.For(this).StatusUpdate("Decrypting metadata");
 
@@ -159,7 +169,7 @@ namespace Loader
 
             // We replace the loaded global-metadata.dat with the newly decrypted version,
             // allowing Il2CppInspector to analyze it as normal
-            stream.Write(metadataBlob);
+            stream.Write(0, metadataBlob);
 
             // Some types have reordered fields - these calls tell Il2CppInspector what the correct field order is
             // See MappedTypes.cs for details
@@ -181,6 +191,10 @@ namespace Loader
         // This executes just as Il2CppInspector is about to read all of the .NET identifier strings (eg. type names).
         // We can use this to acquire the strings ourselves instead
         public void GetStrings(Metadata metadata, PluginGetStringsEventInfo data) {
+
+            // Don't do anything if this isn't for us
+            if (!IsOurs)
+                return;
 
             // Tell the user what is happening in case it takes a while
             PluginServices.For(this).StatusUpdate("Decrypting strings");
@@ -230,6 +244,11 @@ namespace Loader
         // Instead, we simply tell Il2CppInspector we have handled the string literals but actually do nothing,
         // and defer this task until later
         public void GetStringLiterals(Metadata metadata, PluginGetStringLiteralsEventInfo data) {
+
+            // Don't do anything if this isn't for us
+            if (!IsOurs)
+                return;
+
             // We need to prevent Il2CppInspector from attempting to read string literals from the metadata file
             // until we can calculate how many there are
             data.FullyProcessed = true;
@@ -244,6 +263,10 @@ namespace Loader
         // Therefore this is a good place to make any final changes to the data that the high level models and output modules will rely on
         // In this case, we are going to acquire all of the string literals that we deferred earlier
         public void PostProcessPackage(Il2CppInspector.Il2CppInspector package, PluginPostProcessPackageEventInfo data) {
+
+            // Don't do anything if this isn't for us
+            if (!IsOurs)
+                return;
 
             // Tell the user what is happening in case it takes a while
             PluginServices.For(this).StatusUpdate("Decrypting string literals");
