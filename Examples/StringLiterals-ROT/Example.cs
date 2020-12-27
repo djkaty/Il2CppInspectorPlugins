@@ -11,10 +11,10 @@
  * The example code performs 'ROT' decryption on all of the string literals in an IL2CPP application
  */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Il2CppInspector;
+using Il2CppInspector.PluginAPI;
 using Il2CppInspector.PluginAPI.V100;
 
 namespace Example

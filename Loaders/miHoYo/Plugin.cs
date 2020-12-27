@@ -16,6 +16,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using NoisyCowStudios.Bin2Object;
 using Il2CppInspector;
+using Il2CppInspector.PluginAPI;
 using Il2CppInspector.PluginAPI.V100;
 using System.Diagnostics;
 using System.Text;
@@ -59,10 +60,13 @@ namespace Loader
         // Options
 
         // We'll need the file path to the corresponding UnityPlayer.dll (actually Honkai Impact 3.8 and 4.3 seem to be interchangeable)
-        private PluginOptionFilePath unityPath
-            = new PluginOptionFilePath { Name = "unity-player-path", Description = "Path to matching UnityPlayer.dll", Required = true,
-                Validate = path => !File.Exists(path)? throw new FileNotFoundException($"File does not exist") : true
-            };
+        private PluginOptionFilePath unityPath = new PluginOptionFilePath {
+            Name = "unity-player-path",
+            Description = "Path to matching UnityPlayer.dll",
+            Required = true,
+            MustExist = true,
+            Validate = path => path.ToLower().EndsWith(".dll")? true : throw new FileNotFoundException($"You must supply a DLL file", path)
+        };
 
         private PluginOptionChoice<string> game = new PluginOptionChoice<string> {
             Name = "game",

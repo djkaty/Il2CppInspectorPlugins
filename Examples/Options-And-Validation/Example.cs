@@ -29,12 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Il2CppInspector;
 using Il2CppInspector.PluginAPI.V100;
-using System.Diagnostics;
-using System.Text;
 
 namespace Loader
 {
@@ -110,13 +105,23 @@ namespace Loader
         };
 
         // File path option (GUI: file selection dialog)
-        // The internal validator will check the pathname is valid but not whether the file exists or not
+        // The internal validator will check the pathname is valid
         private PluginOptionFilePath filePath = new PluginOptionFilePath {
             Name = "path-to-some-file",
             Description = "Path to external file",
             Required = true,
 
-            Validate = path => File.Exists(path)? true : throw new FileNotFoundException($"File does not exist", path)
+            // Set this to ensure the user selects a file that exists
+            MustExist = true, 
+
+            // Set this to ensure the user selects a file that doesn't exist (usually for saving)
+            MustNotExist = false,
+
+            // Set this to ensure the user selects a folder rather than a file
+            IsFolder = false,
+
+            // Example validation, forces the user to select a file ending in ".dll"
+            Validate = path => path.ToLower().EndsWith(".dll")? true : throw new FileNotFoundException($"You must supply a DLL file", path)
         };
 
         // List of choices (GUI: list of radio buttons)
