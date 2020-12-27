@@ -29,11 +29,51 @@ Use `--plugins` at the command line or click *Manage Plugins...* in the GUI to c
 
 Learn more in the [Using Plugins](https://github.com/djkaty/Il2CppInspector#using-plugins) section of the Il2CppInspector README.
 
+### Issue reports
+
+**ONLY** use the issue tracker to report bugs in plugins.
+
+**DO NOT** use the issue tracker to request plugins, request plugin features, ask for help with plugins or report bugs in Il2CppInspector. These issues will be ignored. The plugin architecture exists to help you create new functionality, but we do not provide official support or take requests.
+
+To report bugs in Il2CppInspector or its handling of plugins, use the [Il2CppInspector issue tracker](https://github.com/djkaty/Il2CppInspector/issues).
+
 ### Creating plugins
 
-A tutorial on how to create plugins is coming soon! In the meantime, you can check out the source code of all of the current plugins.
+_A tutorial on how to create plugins is coming soon! In the meantime, you can check out the source code of all of the current plugins._
 
 ### Submitting plugins
 
-More information coming soon!
+To submit a plugin:
 
+* Clone the repo
+* Create a folder in the appropriate category (`Examples` or `Loaders`) and place your plugin there
+* Remove any local file references from the `.csproj` file
+* Submit a PR with the new or update plugin as commits on `Il2CppInspectorPlugins`
+
+#### Submission requirements
+
+If you plugin operates on a specific application, you must attach the related files to the PR so that we can test it, but do not include them in commits.
+
+Plugin submissions should include source code only.
+
+Plugin submissions should not include files from 3rd party commercial applications. If your plugin requires a 3rd party DLL or other file to function, create an option which asks the user to supply it. Dependencies such as nuget packages and open-source code from github are permitted.
+
+#### One plugin, one purpose
+
+Plugins are designed to be chained. Do not include multiple unrelated functions in your plugin. Create separate plugins for each task.
+
+#### Code style
+
+Your plugin should as closely as possible follow the code style demonstrated in the existing plugins. Comment your code clearly so that its functionality can be understood by others.
+
+Use descriptive, grammatically correct and correctly capitalized names and descriptions for your plugin and their options (if English is not your first language, we will help you).
+
+#### Plugin updates
+
+Submit updates to your plugins as PRs as above.
+
+#### Licensing
+
+Submissions that are accepted will be licensed under AGPLv3.
+
+We may change, split or merge plugins over time to keep the codebase clean and logical, or incorporate new features added to Il2CppInspector.
