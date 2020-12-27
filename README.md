@@ -33,9 +33,11 @@ Learn more in the [Using Plugins](https://github.com/djkaty/Il2CppInspector#usin
 
 **ONLY** use the issue tracker to report bugs in plugins.
 
-**DO NOT** use the issue tracker to request plugins, request plugin features, ask for help with plugins or report bugs in Il2CppInspector. These issues will be ignored. The plugin architecture exists to help you create new functionality, but we do not provide official support or take requests.
+**DO NOT** use the issue tracker to request plugins, request features for existing plugins, ask for help with plugins or report bugs in Il2CppInspector. These issues will be ignored. The plugin architecture exists to help you create new functionality, but we do not provide official support or take requests.
 
 To report bugs in Il2CppInspector or its handling of plugins, use the [Il2CppInspector issue tracker](https://github.com/djkaty/Il2CppInspector/issues).
+
+If you need plugin options, hooks or access to data that is not currently supported, or other plugin API features, feel free to suggest them on the [Il2CppInspector issue tracker](https://github.com/djkaty/Il2CppInspector/issues)!
 
 ### Creating plugins
 
