@@ -160,12 +160,23 @@ namespace Loader
             },
 
             // Dropdown is the default option so you can omit this
-            // Style = PluginOptionChoiceStyle.Dropdown
+            // Style = PluginOptionChoiceStyle.Dropdown 
         };
 
         // Make the options available to Il2CppInspector
         // The order determines the order options appear in the CLI help and GUI dialog box
         public List<IPluginOption> Options => new List<IPluginOption> { text, text2, number, hexNumber, boolean, filePath, choice1, choice2 };
+
+        // You can add conditions to enable or disable options in the GUI based on the settings of other options.
+        // These must be initialized in the parameterless constructor
+        public Plugin() {
+
+            // Here we only enable the first set of choices if the boolean option is ticked
+            choice1.If = () => boolean.Value;
+
+            // We can also use the If property from another option to chain conditions
+            choice2.If = () => !choice1.If();
+        }
 
         // You can optionally implement OptionsChanged
         // This event fires when the user changes the options (supplied at the CLI, via the GUI dialog box or in code),
