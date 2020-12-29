@@ -8,7 +8,7 @@ This is the official repository of plugins for [Il2CppInspector](https://github.
 
 These plugins allow the processing of IL2CPP workloads not directly supported by Il2CppInspector.
 
-* **miHoYo** - Honkai Impact and Genshin Impact
+* **miHoYo** - Honkai Impact and Genshin Impact _(**NOTE**: Requires UnityPlayer.dll from the corresponding PC version of the game, even if you are inspecting a mobile version)_
 
 #### Examples
 
