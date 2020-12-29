@@ -29,12 +29,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Il2CppInspector;
 using Il2CppInspector.PluginAPI.V100;
+using NoisyCowStudios.Bin2Object;
 
 namespace Loader
 {
     // Define your plugin class, implementing IPlugin plus interfaces for any hooks you wish to use
-    public class Plugin : IPlugin
+    public class Plugin : IPlugin, ILoadPipeline
     {
         // Set the details of the plugin here
         public string Id => "options-example";
@@ -51,6 +53,9 @@ namespace Loader
             // If you supply a single character, eg. "t", single-dash syntax is used ("-t")
             Name = "text",
 
+            // If Required = true, the CLI and GUI will force the user to set a value
+            Required = true,
+
             // The description of the option for CLI help and GUI options editor
             Description = "Text option"
         };
@@ -59,9 +64,6 @@ namespace Loader
         private PluginOptionText text2 = new PluginOptionText {
             Name = "test2",
             Description = "Another text option", 
-
-            // If Required = true, the CLI and GUI will force the user to set a value
-            Required = true,
 
             // You can optionally supply a default value for an option
             Value = "starting value",
@@ -120,8 +122,14 @@ namespace Loader
             // Set this to ensure the user selects a folder rather than a file
             IsFolder = false,
 
-            // Example validation, forces the user to select a file ending in ".dll"
-            Validate = path => path.ToLower().EndsWith(".dll")? true : throw new FileNotFoundException($"You must supply a DLL file", path)
+            // Allowed file extensions (case-insensitive)
+            AllowedExtensions = new Dictionary<string, string> {
+                ["dll"] = "DLL files",
+                ["exe"] = "Executable files"
+            },
+
+            // Example validation, forces the user to select a file that is smaller than 10MB
+            Validate = path => new FileInfo(path).Length <= 10 * 1024 * 1024? true : throw new ArgumentException("File must be smaller than 10MB")
         };
 
         // List of choices (GUI: list of radio buttons)
@@ -150,7 +158,6 @@ namespace Loader
         private PluginOptionChoice<string> choice2 = new PluginOptionChoice<string> {
             Name = "choice2",
             Description = "Another list of choices",
-            Required = true,
             Value = "third-item",
 
             Choices = new Dictionary<string, string> {
@@ -169,13 +176,14 @@ namespace Loader
 
         // You can add conditions to enable or disable options in the GUI based on the settings of other options.
         // These must be initialized in the parameterless constructor
+        // NOTE: If you set an If predicate, Required MUST NOT be set to true
         public Plugin() {
 
             // Here we only enable the first set of choices if the boolean option is ticked
-            choice1.If = () => boolean.Value;
+            text2.If = () => number.Value == 5;
 
             // We can also use the If property from another option to chain conditions
-            choice2.If = () => !choice1.If();
+            choice2.If = () => !text2.If();
         }
 
         // You can optionally implement OptionsChanged
