@@ -36,7 +36,7 @@ using NoisyCowStudios.Bin2Object;
 namespace Loader
 {
     // Define your plugin class, implementing IPlugin plus interfaces for any hooks you wish to use
-    public class Plugin : IPlugin, ILoadPipeline
+    public class Plugin : IPlugin
     {
         // Set the details of the plugin here
         public string Id => "options-example";

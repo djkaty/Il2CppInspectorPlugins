@@ -184,11 +184,10 @@ namespace Loader
             stream.AddObjectMapping(typeof(Il2CppInspector.Il2CppPropertyDefinition), typeof(Il2CppPropertyDefinition));
 
             // We tell Il2CppInspector that we have taken care of the metadata
-            // FullyProcessed prevents other plugins from making further pre-processing modifications
             // IsStreamModified marks the original data stream as modified so that the user is able to save the changes
             // SkipValidation tells Il2CppInspector not to check this global-metadata.dat for validity;
             // if we don't set this, it will report that the metadata is invalid
-            info.FullyProcessed = info.IsStreamModified = true;
+            info.IsStreamModified = true;
             info.SkipValidation = true;
         }
 
@@ -236,7 +235,7 @@ namespace Loader
 
             // This tells Il2CppInspector we have handled the strings and not to attempt to read them itself
             // The strings will be copied from data.Strings to metadata.Strings automatically
-            data.FullyProcessed = true;
+            data.IsDataModified = true;
         }
 
         // This executes just as Il2CppInspector is about to read all of the constant literal strings used in the application
