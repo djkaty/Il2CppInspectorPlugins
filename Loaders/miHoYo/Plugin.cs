@@ -62,7 +62,7 @@ namespace Loader
         // We'll need the file path to the corresponding UnityPlayer.dll (actually Honkai Impact 3.8 and 4.3 seem to be interchangeable)
         private PluginOptionFilePath unityPath = new PluginOptionFilePath {
             Name = "unity-player-path",
-            Description = "Path to matching UnityPlayer.dll",
+            Description = "Path to matching UnityPlayer.dll\n\nNOTE: UnityPlayer.dll from the PC version of the game is required even if you are inspecting a mobile version",
             Required = true,
             MustExist = true,
             AllowedExtensions = new Dictionary<string, string> { ["dll"] = "DLL files" }
@@ -74,9 +74,10 @@ namespace Loader
             Required = true,
             Value = "honkai-impact-3.8",
             Choices = new Dictionary<string, string> {
-                ["honkai-impact-3.8"]    = "Honkai Impact 3.8 (PC and mobile)",
-                ["honkai-impact-4.3"]    = "Honkai Impact 4.3 (PC and mobile)",
-                ["genshin-impact-1.1"]   = "Genshin Impact 1.1 (PC)"
+                ["honkai-impact-3.8"]          = "Honkai Impact 3.8 (PC and mobile)",
+                ["honkai-impact-4.3"]          = "Honkai Impact 4.3 (PC and mobile)",
+                ["genshin-impact-1.1-pc"]      = "Genshin Impact 1.1 (PC)",
+                ["genshin-impact-1.1-android"] = "Genshin Impact 1.1 (Android)"
             }
         };
 
@@ -94,9 +95,10 @@ namespace Loader
         // These are the offsets to various functions in each product's UnityPlayer.dll
         // You have to find these by reverse-engineering the code yourself
         private Dictionary<string, UnityOffsets> Offsets = new Dictionary<string, UnityOffsets> {
-            ["honkai-impact-3.8"]    = new UnityOffsets { DecryptMetadata = 0x02B2A0, GetStringFromIndex = 0x031B00, GetStringLiteralFromIndex = 0x0353A0 },
-            ["honkai-impact-4.3"]    = new UnityOffsets { DecryptMetadata = 0x8E7110, GetStringFromIndex = 0x029660, GetStringLiteralFromIndex = 0x02CFA0 },
-            ["genshin-impact-1.1"]   = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 }
+            ["honkai-impact-3.8"]          = new UnityOffsets { DecryptMetadata = 0x02B2A0, GetStringFromIndex = 0x031B00, GetStringLiteralFromIndex = 0x0353A0 },
+            ["honkai-impact-4.3"]          = new UnityOffsets { DecryptMetadata = 0x8E7110, GetStringFromIndex = 0x029660, GetStringLiteralFromIndex = 0x02CFA0 },
+            ["genshin-impact-1.1-pc"]      = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 },
+            ["genshin-impact-1.1-android"] = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 }
         };
 
         // Handle to the loaded DLL
@@ -161,12 +163,15 @@ namespace Loader
             metadataBlob = new byte[stream.Length];
             Marshal.Copy(decryptedBytesUnmanaged, metadataBlob, 0, (int) stream.Length);
 
-            // Genshin Impact adds some spice by encrypting 0x10 bytes for every 0x26700 bytes of the metadata
+            // Genshin Impact adds some spice by encrypting 0x10 bytes for every 'step' bytes of the metadata
             // with a simple XOR key, so we need to apply that too
-            if (game.Value == "genshin-impact-1.1") {
+            if (game.Value.StartsWith("genshin-impact-1.1")) {
                 var key = new byte [] { 0xAD, 0x2F, 0x42, 0x30, 0x67, 0x04, 0xB0, 0x9C, 0x9D, 0x2A, 0xC0, 0xBA, 0x0E, 0xBF, 0xA5, 0x68 };
 
-                for (var pos = 0; pos < metadataBlob.Length; pos += 0x26700)
+                // The step is different on PC and Android but the key is the same
+                var step = game.Value.EndsWith("pc")? 0x26700 : 0x24B80;
+
+                for (var pos = 0; pos < metadataBlob.Length; pos += step)
                     for (var b = 0; b < 0x10; b++)
                         metadataBlob[pos + b] ^= key[b];
             }
