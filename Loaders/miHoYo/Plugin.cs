@@ -65,7 +65,7 @@ namespace Loader
             Description = "Path to matching UnityPlayer.dll",
             Required = true,
             MustExist = true,
-            Validate = path => path.ToLower().EndsWith(".dll")? true : throw new FileNotFoundException($"You must supply a DLL file", path)
+            AllowedExtensions = new Dictionary<string, string> { ["dll"] = "DLL files" }
         };
 
         private PluginOptionChoice<string> game = new PluginOptionChoice<string> {
