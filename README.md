@@ -16,6 +16,7 @@ These plugins are intended as tutorial samples for plugin writers.
 
 * **StringLiterals-ROT** shows how to setup a plugin project and perform ROT decryption on all string literals
 * **Options-And-Validation** shows how to declare options, perform validation and receive option change notifications
+* **LoadPipeline** shows all of the available hooks in Il2CppInspector's load pipeline and how to use them
 
 ### Installing plugins
 
