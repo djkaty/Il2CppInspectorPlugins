@@ -42,7 +42,7 @@ If you need plugin options, hooks or access to data that is not currently suppor
 
 ### Creating plugins
 
-_A tutorial on how to create plugins is coming soon! In the meantime, you can check out the source code of all of the current plugins._
+See the [Il2CppInspector Plugin Development Wiki](https://github.com/djkaty/Il2CppInspector/wiki/Plugins%3A-Getting-Started) for information about how to create plugins.
 
 ### Submitting plugins
 
