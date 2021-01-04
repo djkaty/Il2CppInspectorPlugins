@@ -16,25 +16,31 @@
  *
  * Usage for plugin 'options-example':
  * 
- *   --text                 Text option
- *   --test2                Required. (Default: starting value) Another text option
+ *   --text                 Required. Text option
+ *   --test2                (Default: starting value) Another text option
  *   -n                     (Default: 5) Some number
  *   --hex                  (Default: 0x0) Hexadecimal value
  *   -b                     (Default: false) Boolean option
  *   --path-to-some-file    Required. Path to external file
- *   --choice1              Required. (Default: second-item) List of choices
- *   --choice2              Required. (Default: third-item) Another list of choices
+ *   --choice1              (Default: second-item) List of choices
+ *   --choice2              (Default: Third) Another list of choices
  */
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Il2CppInspector;
 using Il2CppInspector.PluginAPI.V100;
-using NoisyCowStudios.Bin2Object;
 
 namespace Loader
 {
+    // Example enumeration option (see below)
+    public enum ChoiceEnum
+    {
+        First,
+        Second,
+        Third
+    }
+
     // Define your plugin class, implementing IPlugin plus interfaces for any hooks you wish to use
     public class Plugin : IPlugin
     {
@@ -155,15 +161,17 @@ namespace Loader
 
         // List of choices (GUI: drop-down box)
         // Exactly the same as above, but set the style as Dropdown
-        private PluginOptionChoice<string> choice2 = new PluginOptionChoice<string> {
+        private PluginOptionChoice<ChoiceEnum> choice2 = new PluginOptionChoice<ChoiceEnum> {
             Name = "choice2",
             Description = "Another list of choices",
-            Value = "third-item",
+            Value = ChoiceEnum.Third,
 
-            Choices = new Dictionary<string, string> {
-                ["first-item"]   = "First item",
-                ["second-item"]  = "Second item",
-                ["third-item"]   = "Third item"
+            // You can also use Enum classes as options
+            // In the CLI, these will be specified with the constant name, eg. "--choice2 First"
+            Choices = new Dictionary<ChoiceEnum, string> {
+                [ChoiceEnum.First]   = "First item",
+                [ChoiceEnum.Second]  = "Second item",
+                [ChoiceEnum.Third]   = "Third item"
             },
 
             // Dropdown is the default option so you can omit this
