@@ -37,6 +37,8 @@ Learn more in the [Using Plugins](https://github.com/djkaty/Il2CppInspector#usin
 
 **DO NOT** use the issue tracker to request plugins, request features for existing plugins, ask for help with plugins or report bugs in Il2CppInspector. These issues will be ignored. The plugin architecture exists to help you create new functionality, but we do not provide official support or take requests.
 
+To report bugs in specific plugins, file an issue in the plugin owner's GitHub repo.
+
 To report bugs in Il2CppInspector or its handling of plugins, use the [Il2CppInspector issue tracker](https://github.com/djkaty/Il2CppInspector/issues).
 
 If you need plugin options, hooks or access to data that is not currently supported, or other plugin API features, feel free to suggest them on the [Il2CppInspector issue tracker](https://github.com/djkaty/Il2CppInspector/issues)!
@@ -47,18 +49,27 @@ See the [Il2CppInspector Plugin Development Wiki](https://github.com/djkaty/Il2C
 
 ### Submitting plugins
 
-To submit a plugin:
+There are two ways to submit a plugin:
+
+To submit a plugin whose code will reside directly in this repository:
 
 * Clone the repo
-* Create a folder in the appropriate category (`Examples` or `Loaders`) and place your plugin there
+* Create a folder in the appropriate category (`Examples` or `Loaders`) and place your plugin there with the `.sln` and `.csproj` files in the same folder
 * Remove any local file references from the `.csproj` file
 * Submit a PR with the new or update plugin as commits on `Il2CppInspectorPlugins`
+
+To submit a plugin with code from a separate repository:
+
+* Create a repo with your plugin, with the `.sln` and `.csproj` files in the root folder
+* Remove any local file references from the `.csproj` file
+* Submit a PR with the repo link
+* We will add the plugin to this repo as a git submodule
 
 #### Submission requirements
 
 If you plugin operates on a specific application, you must attach the related files to the PR so that we can test it, but do not include them in commits.
 
-Plugin submissions should include source code only.
+Plugin submissions should include source code and documentation only.
 
 Plugin submissions should not include files from 3rd party commercial applications. If your plugin requires a 3rd party DLL or other file to function, create an option which asks the user to supply it. Dependencies such as nuget packages and open-source code from github are permitted.
 
@@ -78,6 +89,6 @@ Submit updates to your plugins as PRs as above.
 
 #### Licensing
 
-Submissions that are accepted will be licensed under AGPLv3.
+Submissions that are accepted will be licensed under AGPLv3. If your code is in a separate repo, your license must be compatible with AGPLv3.
 
-We may change, split or merge plugins over time to keep the codebase clean and logical, or incorporate new features added to Il2CppInspector.
+We may change, split, merge or remove plugins over time to keep the codebase clean and logical, or incorporate new features added to Il2CppInspector.
