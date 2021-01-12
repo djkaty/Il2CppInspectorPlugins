@@ -341,3 +341,4 @@ healthchecksdb
 *.json
 *.xlsx
 *.csv
+/plugins
