@@ -34,7 +34,7 @@ namespace Analytics
         public string Id => "analytics";
 
         // The full name of the plugin
-        public string Name => "Analytics Generator";
+        public string Name => "Example: Analytics Generator";
 
         // The nickname of the plugin author
         public string Author => "Katy"; 

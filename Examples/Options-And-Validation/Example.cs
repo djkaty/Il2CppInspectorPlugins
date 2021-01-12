@@ -46,7 +46,7 @@ namespace Loader
     {
         // Set the details of the plugin here
         public string Id => "options-example";
-        public string Name => "Options & Validation Example";
+        public string Name => "Example: Options & Validation";
         public string Author => "Katy";
         public string Version => "1.0";
         public string Description => "Demonstrates how to handle options and validation";

@@ -26,7 +26,7 @@ namespace Example
         public string Id => "string-rot";
 
         // The full name of the plugin
-        public string Name => "String literal ROT decryptor";
+        public string Name => "Example: String literal ROT decryptor";
 
         // The nickname of the plugin author
         public string Author => "Katy"; 

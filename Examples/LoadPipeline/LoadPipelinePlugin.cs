@@ -29,7 +29,7 @@ namespace Loader
     {
         // Set the details of the plugin here
         public string Id => "load-pipeline";
-        public string Name => "Load Pipeline Example";
+        public string Name => "Example: Load Pipeline";
         public string Author => "Katy";
         public string Version => "1.0";
         public string Description => "Demonstrates the load pipeline process";
