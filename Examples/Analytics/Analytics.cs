@@ -10,7 +10,7 @@
  * This plugin shows how to generate statistical data from an IL2CPP binary that can be analyzed in Excel,
  * how to output files and how to use a 3rd party nuget package in a plugin
  * 
- * NOTE: Be sure to copy Aspose.Cells.dll into the plugin output folder
+ * NOTE: Be sure to copy Aspose.Cells.dll and System.Drawing.Common.dll into the plugin output folder
  */
 
 using System;
