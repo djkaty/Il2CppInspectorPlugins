@@ -4,19 +4,37 @@ This is the official repository of plugins for [Il2CppInspector](https://github.
 
 ### Current plugins
 
+#### Core
+
+These plugins are part of the base functionality of Il2CppInspector. They are enabled by default and should always be present (but may be disabled if desired).
+
+* **API-Discovery** - Performs automatic ROT decryption of encrypted IL2CPP API export names
+
+* **Binary-Metadata-Field-Reconstructor** - Performs automatic resolution of scrambled field order in key binary metadata structures
+
+* **String-Decryptor** - Performs automatic XOR decryption of encrypted metadata strings
+
+* **XOR-Decryptor** - Performs automatic heuristic decryption of XOR-encrypted binary files
+
 #### Loaders
 
 These plugins allow the processing of IL2CPP workloads not directly supported by Il2CppInspector.
 
-* **miHoYo** - Honkai Impact and Genshin Impact _(**NOTE**: Requires UnityPlayer.dll from the corresponding PC version of the game, even if you are inspecting a mobile version)_
+* **Beebyte-Deobfuscator [COMING SOON]** - Enables deobfuscation of .NET symbols obfuscated by BeeByte by performing a comparative differential analysis with an unobfuscated version of the application
+
+* **miHoYo** - Enables loading of Honkai Impact and Genshin Impact
+  _(**NOTE**: Requires UnityPlayer.dll from the corresponding PC version of the game, even if you are inspecting a mobile version)_
 
 #### Examples
 
 These plugins are intended as tutorial samples for plugin writers.
 
 * **StringLiterals-ROT** shows how to setup a plugin project and perform ROT decryption on all string literals
+ 
 * **Options-And-Validation** shows how to declare options, perform validation and receive option change notifications
+ 
 * **LoadPipeline** shows all of the available hooks in Il2CppInspector's load pipeline and how to use them
+
 * **Analytics** shows how to use a 3rd party nuget package and output data to files, producing a frequency graph of the chosen section in the input binary
 
 ### Installing plugins
