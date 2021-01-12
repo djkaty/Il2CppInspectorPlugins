@@ -1,0 +1,3 @@
+ [submodule "Beebyte-Deobfuscator"]
+	path = Loaders/Beebyte-Deobfuscator
+	url = https://github.com/OsOmE1/Beebyte-Deobfusctator
