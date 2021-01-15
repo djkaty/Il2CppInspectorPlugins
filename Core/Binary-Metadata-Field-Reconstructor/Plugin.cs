@@ -830,7 +830,7 @@ namespace Il2CppInspector.Plugins.Core
             MetadataRegistration.fieldOffsetsCount = fieldOffsets.count;
 
             // Zero out any unprocessed items
-            MetadataRegistration.typeDefinitionsSizesCount = 0;
+            MetadataRegistration.typeDefinitionsSizesCount = Metadata.Types.Length;
             MetadataRegistration.typeDefinitionsSizes = 0;
             MetadataRegistration.genericClassesCount = 0;
             MetadataRegistration.genericClasses = 0;
