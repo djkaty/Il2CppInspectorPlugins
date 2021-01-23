@@ -1,4 +1,5 @@
 ﻿using Beebyte_Deobfuscator.Lookup;
+using Il2CppInspector.Cpp;
 using Il2CppInspector.PluginAPI;
 using Il2CppInspector.Reflection;
 
@@ -14,15 +15,20 @@ namespace Beebyte_Deobfuscator.Deobfuscator
         {
             PluginServices services = PluginServices.For(plugin);
 
-            if (plugin.FileFormat is Il2CppInspector.APKReader) throw new System.ArgumentException("APKs can only be deobfuscated with either Mono or APK mode");
-
             services.StatusUpdate("Loading unobfuscated application");
-            var il2cppClean = Il2CppInspector.Il2CppInspector.LoadFromFile(plugin.BinaryPath.Value, plugin.MetadataPath.Value, statusCallback: services.StatusUpdate);
+            var il2cppClean = Il2CppInspector.Il2CppInspector.LoadFromPackage(new[] { plugin.BinaryPath });
+            if(il2cppClean == null) il2cppClean = Il2CppInspector.Il2CppInspector.LoadFromFile(plugin.BinaryPath, plugin.MetadataPath, statusCallback: services.StatusUpdate);
+            
+            if (plugin.CompilerType.Value != CppCompiler.GuessFromImage(il2cppClean[0].BinaryImage))
+            {
+                throw new System.ArgumentException("Cross compiler deobfuscation has not been implemented yet");
+            }
             services.StatusUpdate("Creating type model for unobfuscated application");
             var modelClean = new TypeModel(il2cppClean[0]);
 
             services.StatusUpdate("Creating LookupModel for obfuscated application");
-            LookupModel lookupModel = new LookupModel(model, modelClean, plugin.NamingRegex.Value);
+            LookupModel lookupModel = new LookupModel(plugin.NamingRegex);
+            lookupModel.Init(model.ToLookupModule(lookupModel), modelClean.ToLookupModule(lookupModel));
             services.StatusUpdate("Deobfuscating binary");
             lookupModel.TranslateTypes(true);
             return lookupModel;

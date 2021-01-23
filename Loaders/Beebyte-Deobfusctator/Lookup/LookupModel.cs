@@ -1,6 +1,7 @@
 ﻿using Beebyte_Deobfuscator.Output;
 using dnlib.DotNet;
 using Il2CppInspector.Reflection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,16 +11,42 @@ namespace Beebyte_Deobfuscator.Lookup
     {
         public List<Translation> Translations = new List<Translation>();
 
-        private Dictionary<int, LookupMatrix> Table;
-        private HashSet<int> ReservedKeys;
+        private LookupMatrix Matrix;
         private Dictionary<LookupType, LookupType> Matches;
         private HashSet<LookupType> MatchedTypes;
 
-        public List<string> CleanTypeNames;
-        public HashSet<LookupType> CleanTypes;
-        public List<string> ObfTypeNames;
-        public HashSet<LookupType> ObfTypes;
-
+        private List<string> CleanTypeNameData;
+        public List<string> CleanTypeNames
+        {
+            get
+            {
+                return CleanTypeNameData;
+            }
+        }
+        private List<LookupType> CleanTypeData;
+        public List<LookupType> CleanTypes
+        {
+            get
+            {
+                return CleanTypeData;
+            }
+        }
+        private List<string> ObfTypeNameData;
+        public List<string> ObfTypeNames
+        {
+            get
+            {
+                return ObfTypeNameData;
+            }
+        }
+        public List<LookupType> ObfTypeData;
+        public List<LookupType> ObfTypes
+        {
+            get
+            {
+                return ObfTypeData;
+            }
+        }
         public List<TypeDef> ProcessedMonoTypes = new List<TypeDef>();
         public List<TypeInfo> ProcessedIl2CppTypes = new List<TypeInfo>();
         public Dictionary<TypeDef, LookupType> MonoTypeMatches = new Dictionary<TypeDef, LookupType>();
@@ -27,90 +54,43 @@ namespace Beebyte_Deobfuscator.Lookup
 
         public string NamingRegex;
 
-        public LookupModel(TypeModel obfModel, TypeModel cleanModel, string namingRegex)
+        public LookupModel(string namingRegex)
         {
-            if (obfModel == null || cleanModel == null || namingRegex == null) return;
             NamingRegex = namingRegex;
             ProcessedMonoTypes = new List<TypeDef>();
             ProcessedIl2CppTypes = new List<TypeInfo>();
             MonoTypeMatches = new Dictionary<TypeDef, LookupType>();
             Il2CppTypeMatches = new Dictionary<TypeInfo, LookupType>();
-
-            IEnumerable<TypeInfo> obfTypes = obfModel.Types.Where(t => t.Assembly.ShortName == "Assembly-CSharp.dll");
-            IEnumerable<TypeInfo> cleanTypes = cleanModel.Types.Where(t => t.Assembly.ShortName == "Assembly-CSharp.dll");
-
-            Init(LookupType.TypesFromIl2Cpp(obfTypes, this), LookupType.TypesFromIl2Cpp(cleanTypes, this));
-        }
-        public LookupModel(TypeModel obfModel, IEnumerable<TypeDef> cleanTypes, string namingRegex)
-        {
-            if (obfModel == null || cleanTypes == null || namingRegex == null) return;
-            NamingRegex = namingRegex;
-            ProcessedMonoTypes = new List<TypeDef>();
-            ProcessedIl2CppTypes = new List<TypeInfo>();
-            MonoTypeMatches = new Dictionary<TypeDef, LookupType>();
-            Il2CppTypeMatches = new Dictionary<TypeInfo, LookupType>();
-
-            IEnumerable<TypeInfo> obfTypes = obfModel.Types.Where(t => t.Assembly.ShortName == "Assembly-CSharp.dll");
-
-            Init(LookupType.TypesFromIl2Cpp(obfTypes, this), LookupType.TypesFromMono(cleanTypes, this));
         }
 
-        private void Init(IEnumerable<LookupType> obfTypes, IEnumerable<LookupType> cleanTypes)
+        public void Init(LookupModule obfModule, LookupModule cleanModule)
         {
-            Table = new Dictionary<int, LookupMatrix>();
-            ReservedKeys = new HashSet<int>();
+            if (cleanModule.Namespaces.Contains("Beebyte.Obfuscator")) throw new ArgumentException("The application you provided as \"unobfuscated\" has obfuscation detected");
             Matches = new Dictionary<LookupType, LookupType>();
             MatchedTypes = new HashSet<LookupType>();
 
-            CleanTypes = cleanTypes.ToHashSet();
-            CleanTypeNames = new List<string>();
-            CleanTypeNames.AddRange(cleanTypes.Select(x => x.Name));
+            CleanTypeData = cleanModule.Types.ToList();
+            CleanTypeNameData = new List<string>();
+            CleanTypeNameData.AddRange(cleanModule.Types.Select(x => x.Name));
 
-            ObfTypes = obfTypes.ToHashSet();
-            ObfTypeNames = new List<string>();
-            ObfTypeNames.AddRange(obfTypes.Select(x => x.Name));
+            ObfTypeData = obfModule.Types;
+            ObfTypeNameData = new List<string>();
+            ObfTypeNameData.AddRange(obfModule.Types.Select(x => x.Name));
+            Matrix = new LookupMatrix();
 
-            int x = obfTypes.MaxObject(t => t.Fields.Count(f => f.IsStatic)).Fields.Count(f => f.IsStatic);
-            int y = obfTypes.MaxObject(t => t.Fields.Count(f => f.IsLiteral)).Fields.Count(f => f.IsLiteral);
-            int z = obfTypes.MaxObject(t => t.Fields.Count(f => !f.IsStatic && !f.IsLiteral)).Fields.Count(f => !f.IsStatic && !f.IsLiteral);
-            int w = obfTypes.MaxObject(t => t.Properties.Count).Properties.Count;
-
-
-            foreach (LookupType type in obfTypes.Where(t => t.ShouldTranslate(this)))
+            foreach (LookupType type in obfModule.Types.Where(t => t.ShouldTranslate))
             {
-                if (!type.DeclaringType.IsEmpty()) continue;
+                if (!type.DeclaringType.IsEmpty) continue;
 
-                LookupMatrix arr = Lookup(type.Fields.Count);
-                if (arr == null)
-                {
-                    ReservedKeys.Add(type.Fields.Count);
-                    LookupMatrix array = new LookupMatrix(x, y, z, w);
-                    array.Insert(type);
-                    Table.Add(type.Fields.Count, array);
-                }
-                else
-                {
-                    arr.Insert(type);
-                }
+                Matrix.Insert(type);
             }
-        }
-
-        private LookupMatrix Lookup(int key)
-        {
-            return (ReservedKeys.Contains(key))
-               ? Table[key]
-               : null;
         }
 
         public LookupType GetMatchingType(LookupType type, bool checkoffsets)
         {
             LookupType typeInfo = null;
 
-            LookupMatrix arr = Lookup(type.Fields.Count);
-
-            if (arr == null) return typeInfo;
-
-            List<LookupType> types = arr.Get(type);
+            List<LookupType> types = Matrix.Get(type);
 
             if (types.Count() == 1 && types[0] != null)
             {
@@ -138,16 +118,20 @@ namespace Beebyte_Deobfuscator.Lookup
                 float score = 0.0f;
 
                 if (checkoffsets)
-                    score = (Helpers.CompareFieldOffsets(t, type) + Helpers.CompareFieldTypes(t, type)) / 2;
+                    score = (Helpers.CompareFieldOffsets(t, type, this) + Helpers.CompareFieldTypes(t, type, this)) / 2;
                 else
-                    score = Helpers.CompareFieldTypes(t, type);
+                    score = Helpers.CompareFieldTypes(t, type, this);
                 if (score > best_score)
                 {
                     best_score = score;
                     typeInfo = t;
                 }
             }
-            if (typeInfo != null && !MatchedTypes.Contains(typeInfo)) Matches.Add(typeInfo, type); MatchedTypes.Add(typeInfo);
+            if (typeInfo != null && !MatchedTypes.Contains(typeInfo)) 
+            {
+                Matches.Add(typeInfo, type);
+                MatchedTypes.Add(typeInfo);
+            }
             return typeInfo;
         }
 
@@ -155,13 +139,13 @@ namespace Beebyte_Deobfuscator.Lookup
         {
             foreach (LookupType t in CleanTypes)
             {
-                if (!t.DeclaringType.IsEmpty()) continue;
+                if (!t.DeclaringType.IsEmpty || t.IsEnum) continue;
                 LookupType matchingType = GetMatchingType(t, checkoffsets);
                 if (matchingType == null) continue;
 
                 if (matchingType.Children.Count() > 0 && t.Children.Count() > 0) LookupTranslators.TranslateChildren(matchingType, t, checkoffsets, this);
 
-                matchingType.SetName(t.Name, this);
+                matchingType.Name = t.Name;
             }
             TranslateFields(checkoffsets);
         }

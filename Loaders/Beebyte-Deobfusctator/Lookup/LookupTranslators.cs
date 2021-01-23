@@ -25,9 +25,13 @@ namespace Beebyte_Deobfuscator.Lookup
                     float score = 0.0f;
 
                     if (checkoffsets)
-                        score = (Helpers.CompareFieldOffsets(cleanChild, obfChild) + Helpers.CompareFieldTypes(cleanChild, obfChild)) / 2;
-                    else
-                        score = Helpers.CompareFieldTypes(cleanChild, obfChild);
+                    {
+                        score = (Helpers.CompareFieldOffsets(cleanChild, obfChild, lookupModel) + Helpers.CompareFieldTypes(cleanChild, obfChild, lookupModel)) / 2;
+                    }
+                    else 
+                    {
+                        score = Helpers.CompareFieldTypes(cleanChild, obfChild, lookupModel);
+                    }
 
                     if (score > best_score)
                     {
@@ -37,7 +41,7 @@ namespace Beebyte_Deobfuscator.Lookup
                 }
                 if (best_match == null) continue;
 
-                obfChild.SetName(best_match.Name, lookupModel);
+                obfChild.Name = best_match.Name;
                 TranslateFields(obfChild, best_match, checkoffsets, lookupModel);
             }
         }
@@ -52,7 +56,7 @@ namespace Beebyte_Deobfuscator.Lookup
                 LookupField cleanField = cleanGenericFields[obField.Index];
                 if ((obField.Value.Offset == cleanField.Offset || !checkoffsets) && obField.Value.Name != cleanField.Name)
                 {
-                    obField.Value.SetName(cleanField.Name, lookupModel);
+                    obField.Value.Name = cleanField.Name;
                 }
             }
 
@@ -65,7 +69,7 @@ namespace Beebyte_Deobfuscator.Lookup
                 LookupField cleanField = cleanStaticFields[obField.Index];
                 if ((obField.Value.Offset == cleanField.Offset || !checkoffsets) && obField.Value.Name != cleanField.Name)
                 {
-                    obField.Value.SetName(cleanField.Name, lookupModel);
+                    obField.Value.Name = cleanField.Name;
                 }
             }
         }

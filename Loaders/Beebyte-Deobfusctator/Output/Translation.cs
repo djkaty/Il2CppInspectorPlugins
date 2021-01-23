@@ -20,12 +20,12 @@ namespace Beebyte_Deobfuscator.Output
     }
     public class Translation
     {
-        TranslationType Type;
+        private readonly TranslationType Type;
         string ObfName;
         string CleanName;
 
         public LookupField _field;
-        public LookupType _type;
+        private LookupType _type;
 
         public Translation(string obfName, LookupType type)
         {
@@ -60,13 +60,13 @@ namespace Beebyte_Deobfuscator.Output
         public static async Task Export(BeebyteDeobfuscatorPlugin plugin, LookupModel lookupModel)
         {
             if (!lookupModel.Translations.Any(t => t.CleanName != t.ObfName)) return;
-            switch (plugin.Export.Value)
+            switch (plugin.Export)
             {
                 case ExportType.PlainText:
-                    await ExportPlainText(plugin.ExportPath.Value, lookupModel);
+                    await ExportPlainText(plugin.ExportPath, lookupModel);
                     break;
                 case ExportType.Classes:
-                    await ExportClasses(plugin.ExportPath.Value, plugin.PluginName.Value, lookupModel);
+                    await ExportClasses(plugin.ExportPath, plugin.PluginName, lookupModel);
                     break;
             }
         }
@@ -96,7 +96,7 @@ namespace Beebyte_Deobfuscator.Output
 
                 string start = Output.ClassOutputTop;
                 start = start.Replace("#CLASSNAME#", translation.CleanName);
-                start = start.Replace("#PLUGINNAME#", "TestPlugin");
+                start = start.Replace("#PLUGINNAME#", pluginName);
                 start = start.Replace("#LOCATOR#", translation.GenerateLocater(lookupModel));
                 await output.WriteAsync(start);
 
@@ -119,17 +119,17 @@ namespace Beebyte_Deobfuscator.Output
             List<string> fieldSequence = new List<string>();
             List<string> staticFieldSequence = new List<string>();
 
-            if(_type.Fields.Count(f => !f.IsStatic && !f.IsLiteral) != 0)
+            if (_type.Fields.Count(f => !f.IsStatic && !f.IsLiteral) != 0)
                 foreach (LookupField field in _type.Fields.Where(f => !f.IsStatic && !f.IsLiteral))
                 {
-                    if (field.Type.Namespace == "UnityEngine" || field.Type.Namespace == "System") fieldSequence.Add(field.Type.BaseName);
+                    if (field.Type.Namespace == "UnityEngine" || field.Type.Namespace == "System") fieldSequence.Add(field.Type.Name);
                     else fieldSequence.Add("*");
                 }
 
             if (_type.Fields.Count(f => f.IsStatic && !f.IsLiteral) != 0)
                 foreach (LookupField field in _type.Fields.Where(f => f.IsStatic && !f.IsLiteral))
                 {
-                    if (field.Type.Namespace == "UnityEngine" || field.Type.Namespace == "System") staticFieldSequence.Add(field.Type.BaseName);
+                    if (field.Type.Namespace == "UnityEngine" || field.Type.Namespace == "System") staticFieldSequence.Add(field.Type.Name);
                     else staticFieldSequence.Add("*");
                 }
 

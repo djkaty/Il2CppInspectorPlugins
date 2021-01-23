@@ -1,4 +1,5 @@
 ﻿using Beebyte_Deobfuscator.Lookup;
+using Il2CppInspector.Cpp;
 using Il2CppInspector.PluginAPI;
 using Il2CppInspector.Reflection;
 
@@ -15,12 +16,14 @@ namespace Beebyte_Deobfuscator.Deobfuscator
             PluginServices services = PluginServices.For(plugin);
 
             services.StatusUpdate("Creating model for Mono dll");
-            MonoDecompiler.MonoDecompiler monoDecompiler = MonoDecompiler.MonoDecompiler.FromFile(plugin.MonoPath.Value);
+            if (plugin.CompilerType.Value != CppCompilerType.MSVC) throw new System.ArgumentException("Cross compiler deobfuscation has not been implemented yet");
+            MonoDecompiler.MonoDecompiler monoDecompiler = MonoDecompiler.MonoDecompiler.FromFile(plugin.MonoPath);
             if (monoDecompiler == null) return null;
 
             services.StatusUpdate("Creating LookupModel for obfuscated application");
 
-            LookupModel lookupModel = new LookupModel(model, monoDecompiler.GetTypes(), plugin.NamingRegex.Value);
+            LookupModel lookupModel = new LookupModel(plugin.NamingRegex);
+            lookupModel.Init(model.ToLookupModule(lookupModel), monoDecompiler.GetLookupModule(lookupModel));
             services.StatusUpdate("Deobfuscating binary");
             lookupModel.TranslateTypes();
             return lookupModel;
