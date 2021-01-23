@@ -62,7 +62,9 @@ namespace Loader
         // We'll need the file path to the corresponding UnityPlayer.dll (actually Honkai Impact 3.8 and 4.3 seem to be interchangeable)
         private PluginOptionFilePath unityPath = new PluginOptionFilePath {
             Name = "unity-player-path",
-            Description = "Path to matching UnityPlayer.dll\n\nNOTE: UnityPlayer.dll from the PC version of the game is required even if you are inspecting a mobile version",
+            Description = "UnityPlayer.dll to use for decryption\n\n"
+                        + "NOTE: UnityPlayer.dll from the PC release of the game is required even if you are inspecting a mobile version\n\n"
+                        + "Some UnityPlayer.dll versions are interchangeable, but not all. If your version isn't listed, try it anyway.",
             Required = true,
             MustExist = true,
             AllowedExtensions = new Dictionary<string, string> { ["dll"] = "DLL files" }
@@ -75,7 +77,7 @@ namespace Loader
             Value = "honkai-impact-3.8",
             Choices = new Dictionary<string, string> {
                 ["honkai-impact-3.8"]          = "Honkai Impact 3.8 (PC and mobile)",
-                ["honkai-impact-4.3"]          = "Honkai Impact 4.3 (PC and mobile)",
+                ["honkai-impact-4"]            = "Honkai Impact 4.3 - 4.x (PC and mobile)",
                 ["genshin-impact-1.1-pc"]      = "Genshin Impact 1.1 (PC)",
                 ["genshin-impact-1.1-android"] = "Genshin Impact 1.1 (Android)"
             }
@@ -96,7 +98,7 @@ namespace Loader
         // You have to find these by reverse-engineering the code yourself
         private Dictionary<string, UnityOffsets> Offsets = new Dictionary<string, UnityOffsets> {
             ["honkai-impact-3.8"]          = new UnityOffsets { DecryptMetadata = 0x02B2A0, GetStringFromIndex = 0x031B00, GetStringLiteralFromIndex = 0x0353A0 },
-            ["honkai-impact-4.3"]          = new UnityOffsets { DecryptMetadata = 0x8E7110, GetStringFromIndex = 0x029660, GetStringLiteralFromIndex = 0x02CFA0 },
+            ["honkai-impact-4"]            = new UnityOffsets { DecryptMetadata = 0x042110, GetStringFromIndex = 0x029660, GetStringLiteralFromIndex = 0x02CFA0 },
             ["genshin-impact-1.1-pc"]      = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 },
             ["genshin-impact-1.1-android"] = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 }
         };
