@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2020 Katy Coe - http://www.djkaty.com - https://github.com/djkaty
+    Copyright 2020-2021 Katy Coe - http://www.djkaty.com - https://github.com/djkaty
 
     FOR EDUCATIONAL PURPOSES ONLY
     All rights reserved.
@@ -54,7 +54,7 @@ namespace Loader
         public string Id => "mihoyo";
         public string Name => "miHoYo Loader";
         public string Author => "Katy";
-        public string Version => "1.0";
+        public string Version => "1.0.1";
         public string Description => "Enables loading of games published by miHoYo";
 
         // Options
@@ -64,7 +64,7 @@ namespace Loader
             Name = "unity-player-path",
             Description = "UnityPlayer.dll to use for decryption\n\n"
                         + "NOTE: UnityPlayer.dll from the PC release of the game is required even if you are inspecting a mobile version\n\n"
-                        + "Some UnityPlayer.dll versions are interchangeable, but not all. If your version isn't listed, try it anyway.",
+                        + "Some UnityPlayer.dll versions are interchangeable, but not all. If your version isn't listed, select the closest available version.",
             Required = true,
             MustExist = true,
             AllowedExtensions = new Dictionary<string, string> { ["dll"] = "DLL files" }
@@ -149,6 +149,12 @@ namespace Loader
             // Therefore, we don't want to process global-metadata.dat files that are not for us!
             // miHoYo metadata has an invalid signature at the start of the file so we use that as the criteria
             IsOurs = stream.ReadUInt32(0) != Il2CppConstants.MetadataSignature;
+            if (!IsOurs)
+                return;
+
+            // The DWORD 0x4008 bytes from the end should be an offset to itself
+            var lastBlockPointer = stream.Length - 0x4008;
+            IsOurs = stream.ReadUInt32(lastBlockPointer) == lastBlockPointer;
             if (!IsOurs)
                 return;
 
