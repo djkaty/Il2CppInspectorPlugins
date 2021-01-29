@@ -1,4 +1,4 @@
-# Il2CppInspector Plugins Repository
+﻿# Il2CppInspector Plugins Repository
 
 This is the official repository of plugins for [Il2CppInspector](https://github.com/djkaty/Il2CppInspector)
 
@@ -10,7 +10,7 @@ These plugins are part of the base functionality of Il2CppInspector. They are en
 
 * **API-Discovery** - Performs automatic ROT decryption of encrypted IL2CPP API export names
 
-* **Binary-Metadata-Field-Reconstructor** - Performs automatic resolution of scrambled field order in key binary metadata structures
+* **Binary-Metadata-Field-Reconstructor** - Performs automatic resolution of obfuscated field order in key binary metadata structures
 
 * **String-Decryptor** - Performs automatic XOR decryption of encrypted metadata strings
 
@@ -20,7 +20,9 @@ These plugins are part of the base functionality of Il2CppInspector. They are en
 
 These plugins allow the processing of IL2CPP workloads not directly supported by Il2CppInspector.
 
-* **Beebyte-Deobfuscator [COMING SOON]** - Enables deobfuscation of .NET symbols obfuscated by BeeByte by performing a comparative differential analysis with an unobfuscated version of the application
+* **Beebyte-Deobfuscator** - Enables deobfuscation of .NET symbols obfuscated by BeeByte by performing a differential analysis with an unobfuscated version of the application
+
+* **guigubahuang** - Enables loading of Tale of Immortal (鬼谷八荒 / Guigubahuang)
 
 * **miHoYo** - Enables loading of Honkai Impact and Genshin Impact
   _(**NOTE**: Requires UnityPlayer.dll from the corresponding PC version of the game, even if you are inspecting a mobile version)_
@@ -39,7 +41,7 @@ These plugins are intended as tutorial samples for plugin writers.
 
 ### Installing plugins
 
-[Download all current plugins as a bundle](https://github.com/djkaty/Il2CppInspectorPlugins/releases)
+[Download all current plugins as a bundle](https://github.com/djkaty/Il2CppInspectorPlugins/releases) _(NOTE: does not include example plugins)_
 
 You can also use the `get-plugins.ps1` or `get-plugins.sh` scripts supplied with Il2CppInspector to fetch the current plugins.
 
