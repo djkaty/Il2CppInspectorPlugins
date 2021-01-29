@@ -54,7 +54,7 @@ namespace Loader
         public string Id => "mihoyo";
         public string Name => "miHoYo Loader";
         public string Author => "Katy";
-        public string Version => "1.0.1";
+        public string Version => "1.1.0";
         public string Description => "Enables loading of games published by miHoYo";
 
         // Options
@@ -62,9 +62,10 @@ namespace Loader
         // We'll need the file path to the corresponding UnityPlayer.dll (actually Honkai Impact 3.8 and 4.3 seem to be interchangeable)
         private PluginOptionFilePath unityPath = new PluginOptionFilePath {
             Name = "unity-player-path",
-            Description = "UnityPlayer.dll to use for decryption\n\n"
+            Description = "Path to selected UnityPlayer.dll version\n\n"
                         + "NOTE: UnityPlayer.dll from the PC release of the game is required even if you are inspecting a mobile version\n\n"
-                        + "Some UnityPlayer.dll versions are interchangeable, but not all. If your version isn't listed, select the closest available version.",
+                        + "NOTE: The global-metadata.dat for some game versions can be decrypted by a different UnityPlayer.dll version.\n\n"
+                        + "NOTE: Some UnityPlayer.dll versions are interchangeable, but not all. If your version isn't listed, select the closest available version.",
             Required = true,
             MustExist = true,
             AllowedExtensions = new Dictionary<string, string> { ["dll"] = "DLL files" }
@@ -72,14 +73,14 @@ namespace Loader
 
         private PluginOptionChoice<string> game = new PluginOptionChoice<string> {
             Name = "game",
-            Description = "Game to load",
+            Description = "UnityPlayer.dll version to use for decryption",
             Required = true,
             Value = "honkai-impact-3.8",
             Choices = new Dictionary<string, string> {
-                ["honkai-impact-3.8"]          = "Honkai Impact 3.8 (PC and mobile)",
-                ["honkai-impact-4"]            = "Honkai Impact 4.3 - 4.x (PC and mobile)",
-                ["genshin-impact-1.1-pc"]      = "Genshin Impact 1.1 (PC)",
-                ["genshin-impact-1.1-android"] = "Genshin Impact 1.1 (Android)"
+                ["honkai-impact-3.8"]          = "Honkai Impact 3.8",
+                ["honkai-impact-4"]            = "Honkai Impact 4.3 - 4.5",
+                ["genshin-impact-1.1"]         = "Genshin Impact 1.1",
+                ["genshin-impact-1.2"]         = "Genshin Impact 1.2"
             }
         };
 
@@ -99,8 +100,8 @@ namespace Loader
         private Dictionary<string, UnityOffsets> Offsets = new Dictionary<string, UnityOffsets> {
             ["honkai-impact-3.8"]          = new UnityOffsets { DecryptMetadata = 0x02B2A0, GetStringFromIndex = 0x031B00, GetStringLiteralFromIndex = 0x0353A0 },
             ["honkai-impact-4"]            = new UnityOffsets { DecryptMetadata = 0x042110, GetStringFromIndex = 0x029660, GetStringLiteralFromIndex = 0x02CFA0 },
-            ["genshin-impact-1.1-pc"]      = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 },
-            ["genshin-impact-1.1-android"] = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 }
+            ["genshin-impact-1.1"]         = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 },
+            ["genshin-impact-1.2"]         = new UnityOffsets { DecryptMetadata = 0x1A7B60, GetStringFromIndex = 0x12F620, GetStringLiteralFromIndex = 0x12F860 }
         };
 
         // Handle to the loaded DLL
@@ -173,11 +174,11 @@ namespace Loader
 
             // Genshin Impact adds some spice by encrypting 0x10 bytes for every 'step' bytes of the metadata
             // with a simple XOR key, so we need to apply that too
-            if (game.Value.StartsWith("genshin-impact-1.1")) {
+            if (game.Value.StartsWith("genshin-impact")) {
                 var key = new byte [] { 0xAD, 0x2F, 0x42, 0x30, 0x67, 0x04, 0xB0, 0x9C, 0x9D, 0x2A, 0xC0, 0xBA, 0x0E, 0xBF, 0xA5, 0x68 };
 
-                // The step is different on PC and Android but the key is the same
-                var step = game.Value.EndsWith("pc")? 0x26700 : 0x24B80;
+                // The step is based on the file size
+                var step = (int) (stream.Length >> 14) << 6;
 
                 for (var pos = 0; pos < metadataBlob.Length; pos += step)
                     for (var b = 0; b < 0x10; b++)
