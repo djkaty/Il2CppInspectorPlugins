@@ -82,7 +82,8 @@ namespace Loader
                 ["genshin-impact-1.1"]         = "Genshin Impact 1.1",
                 ["genshin-impact-1.2"]         = "Genshin Impact 1.2",
                 ["genshin-impact-1.4"]         = "Genshin Impact 1.4",
-                ["genshin-impact-2.1"]         = "Genshin Impact 2.1"
+                ["genshin-impact-2.1"]         = "Genshin Impact 2.1",
+                ["genshin-impact-2.2"]         = "Genshin Impact 2.2"
             }
         };
 
@@ -105,7 +106,8 @@ namespace Loader
             ["genshin-impact-1.1"]         = new UnityOffsets { DecryptMetadata = 0x1A7010, GetStringFromIndex = 0x12ECA0, GetStringLiteralFromIndex = 0x12EEE0 },
             ["genshin-impact-1.2"]         = new UnityOffsets { DecryptMetadata = 0x1A7B60, GetStringFromIndex = 0x12F620, GetStringLiteralFromIndex = 0x12F860 },
             ["genshin-impact-1.4"]         = new UnityOffsets { DecryptMetadata = 0x1A67D0, GetStringFromIndex = 0x12E230, GetStringLiteralFromIndex = 0x12E430 },
-            ["genshin-impact-2.1"]         = new UnityOffsets { DecryptMetadata = 0x1A3EE0, GetStringFromIndex = 0x12BED0, GetStringLiteralFromIndex = 0x12C130 }
+            ["genshin-impact-2.1"]         = new UnityOffsets { DecryptMetadata = 0x1A3EE0, GetStringFromIndex = 0x12BED0, GetStringLiteralFromIndex = 0x12C130 },
+            ["genshin-impact-2.2"]         = new UnityOffsets { DecryptMetadata = 0x1658C0, GetStringFromIndex = 0x123F80, GetStringLiteralFromIndex = 0x124120 }
         };
 
         // Handle to the loaded DLL
