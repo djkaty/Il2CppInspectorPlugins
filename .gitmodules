@@ -1,3 +1,6 @@
 [submodule "Loaders/Beebyte-Deobfuscator"]
 	path = Loaders/Beebyte-Deobfuscator
 	url = git://github.com/OsOmE1/Beebyte-Deobfuscator.git
+[submodule "Loaders/girlsfrontline-deobfuscator"]
+	path = Loaders/girlsfrontline-deobfuscator
+	url = https://github.com/neko-gg/girlsfrontline-deobfuscator.git
